@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resilient Youth — Information First Aid Simulation</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f4f2ed;color:#1a1a1a;min-height:100vh}
+.page{max-width:760px;margin:0 auto;padding:2rem 1.5rem}
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid #ddd}
+.brand-logo{width:44px;height:44px;background:#1a1a1a;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#f4f2ed;font-size:18px;font-weight:700;flex-shrink:0}
+.brand-text h1{font-size:16px;font-weight:600;color:#1a1a1a}
+.brand-text p{font-size:13px;color:#666;margin-top:2px}
+.intro{background:#fff;border-radius:12px;padding:1.5rem;margin-bottom:1.5rem;border:1px solid #e0ddd7}
+.intro h2{font-size:18px;font-weight:600;margin-bottom:8px}
+.intro p{font-size:14px;color:#444;line-height:1.7}
+.snav{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:1.5rem;align-items:center}
+.sb{width:34px;height:34px;border-radius:50%;border:1px solid #ccc;background:#fff;font-size:12px;font-weight:600;color:#666;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;flex-shrink:0}
+.sb:hover{background:#f0ede8;border-color:#999}
+.sb.active{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+.sb.va{border-color:#1D9E75;color:#1D9E75;background:#f0fdf7}
+.sb.vb{border-color:#c0392b;color:#c0392b;background:#fdf0f0}
+.sb.sum{border-radius:8px;width:auto;padding:0 12px;font-size:11px;letter-spacing:.04em}
+.card{background:#fff;border-radius:12px;border:1px solid #e0ddd7;overflow:hidden;margin-bottom:1rem}
+.ch{padding:1.25rem 1.5rem;border-bottom:1px solid #eee}
+.ctag{font-size:11px;font-weight:600;color:#888;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.ctitle{font-size:19px;font-weight:600;color:#1a1a1a}
+.ctime{font-size:13px;color:#888;margin-top:3px}
+.ibar{display:flex;gap:3px;margin-top:10px}
+.ip{height:4px;flex:1;border-radius:2px;background:#e8e5e0}
+.ip.on{background:#c0392b}
+.par{display:grid;grid-template-columns:1fr 1fr}
+.tr{padding:1.25rem 1.5rem}
+.tr:first-child{border-right:1px solid #eee}
+.tl{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.tl.re{color:#0a6e4a}
+.tl.ci{color:#9b2226}
+.td{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.td.re{background:#1D9E75}
+.td.ci{background:#c0392b}
+.tr p{font-size:13px;color:#555;line-height:1.65;margin-bottom:8px}
+.tr p:last-child{margin:0}
+.fi{background:#f8f6f2;border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:13px;line-height:1.55;color:#1a1a1a;border-left:3px solid}
+.fi:last-child{margin-bottom:0}
+.fi.tiktok{border-color:#c0392b}
+.fi.twitter{border-color:#1a6db5}
+.fi.whatsapp{border-color:#1D9E75}
+.fi.news{border-color:#b07d1a}
+.fi.official{border-color:#5b4ba8}
+.fi.static{border-color:#aaa;color:#888;font-style:italic}
+.fs{font-size:11px;font-weight:600;color:#888;margin-bottom:4px}
+.db{padding:1.25rem 1.5rem;border-top:1px solid #eee;background:#faf9f7}
+.dl{font-size:11px;font-weight:600;color:#5b4ba8;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+.dq{font-size:15px;font-weight:500;color:#1a1a1a;margin-bottom:14px;line-height:1.55}
+.cs{display:flex;flex-direction:column;gap:8px}
+.cb{padding:12px 16px;border-radius:8px;border:1px solid #ccc;background:#fff;font-size:14px;color:#1a1a1a;cursor:pointer;text-align:left;line-height:1.5;transition:all 0.15s}
+.cb:hover{background:#f0ede8;border-color:#999}
+.oc{margin-top:12px;padding:14px 16px;border-radius:8px;font-size:14px;line-height:1.65}
+.oc.A{background:#f0fdf7;color:#084a30;border-left:3px solid #1D9E75}
+.oc.B{background:#fdf0f0;color:#4a1010;border-left:3px solid #c0392b}
+.ol{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.tog{margin-top:10px;padding:7px 14px;border-radius:8px;border:1px solid #ccc;background:#fff;font-size:13px;color:#1a6db5;cursor:pointer;display:inline-block;transition:all 0.15s}
+.tog:hover{background:#f0ede8}
+.alt{margin-top:8px;padding:14px 16px;border-radius:8px;font-size:14px;line-height:1.65;border:1px dashed}
+.alt.A{background:#fdf0f0;color:#4a1010;border-color:#c0392b}
+.alt.B{background:#f0fdf7;color:#084a30;border-color:#1D9E75}
+.sc{margin-top:12px;padding:12px 14px;border-radius:8px;background:#fff;border:1px solid #d0cbe8;font-size:13px;color:#444;line-height:1.65}
+.scl{font-size:11px;font-weight:600;color:#5b4ba8;letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px}
+.nr{display:flex;justify-content:space-between;align-items:center;margin-top:1rem;gap:8px}
+.nb{padding:9px 18px;border-radius:8px;border:1px solid #ccc;background:#fff;font-size:14px;color:#1a1a1a;cursor:pointer;transition:all 0.15s;white-space:nowrap}
+.nb:hover{background:#f0ede8}
+.nb.pr{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+.nb.pr:hover{background:#333}
+.nb:disabled{opacity:0.3;cursor:default}
+.nc{font-size:13px;color:#888;white-space:nowrap}
+.sum-wrap{padding:0.5rem 0}
+.sum-intro{background:#fff;border-radius:10px;padding:1rem 1.25rem;margin-bottom:1.25rem;border:1px solid #e0ddd7;font-size:14px;color:#444;line-height:1.6}
+.sum-intro strong{color:#1a1a1a}
+.sum-step{background:#fff;border:1px solid #e0ddd7;border-radius:10px;overflow:hidden;margin-bottom:1rem}
+.sum-head{padding:0.875rem 1.25rem;border-bottom:1px solid #eee;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.sum-num{font-size:12px;font-weight:600;color:#888;white-space:nowrap}
+.sum-title{font-size:15px;font-weight:600;color:#1a1a1a;flex:1}
+.sum-badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;white-space:nowrap}
+.sum-badge.A{background:#f0fdf7;color:#084a30;border:1px solid #1D9E75}
+.sum-badge.B{background:#fdf0f0;color:#4a1010;border:1px solid #c0392b}
+.sum-badge.none{background:#f4f2ed;color:#888;border:1px solid #ccc}
+.sum-paths{display:grid;grid-template-columns:1fr 1fr}
+.sum-path{padding:0.875rem 1.25rem;font-size:13px;line-height:1.6;color:#555}
+.sum-path:first-child{border-right:1px solid #eee}
+.sum-path-label{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
+.sum-path-label.A{color:#0a6e4a}
+.sum-path-label.B{color:#9b2226}
+.sum-path.chosen-A{background:#f6fef9}
+.sum-path.chosen-B{background:#fef6f6}
+.sum-dq{padding:0.5rem 1.25rem 0.75rem;font-size:13px;color:#777;font-style:italic;border-bottom:1px solid #eee}
+.footer{margin-top:3rem;padding-top:1.5rem;border-top:1px solid #ddd;font-size:12px;color:#aaa;text-align:center;line-height:1.8}
+@media(max-width:560px){.par{grid-template-columns:1fr}.tr:first-child{border-right:none;border-bottom:1px solid #eee}.sum-paths{grid-template-columns:1fr}.sum-path:first-child{border-right:none;border-bottom:1px solid #eee}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="brand">
+  <div class="brand-logo">RY</div>
+  <div class="brand-text">
+    <h1>Resilient Youth</h1>
+    <p>Information First Aid — Simulation Exercise · LCC International University</p>
+  </div>
+</div>
+
+<div class="intro">
+  <h2>Before you begin</h2>
+  <p>You are about to work through a fifteen-step scenario set in Klaipėda and the wider Baltic region. At each step you will see two things side by side: what is actually happening, and what is circulating on your phone. You will be asked to make a decision. There are no correct answers displayed in advance. Make the choice you would actually make — not the one you think you should make. The debrief comes at the end.</p>
+</div>
+
+<div class="snav" id="sn"></div>
+<div id="sc2"></div>
+
+<div class="footer">
+  Resilient Youth Project · LCC International University · Prototype, May 2026<br>
+  Developed for consortium discussion. Not for wider distribution at this stage.
+</div>
+
+</div>
+<script>
+const steps=[
+{id:1,tag:"Step 1",title:"Disturbance in Rīga",time:"Day 1 — morning",intensity:2,
+real:["A group of Russian-speaking teenagers in Rīga get into a heated argument with local youths at a tram stop. One boy is shoved. A brief scuffle. Police attend, give warnings, no arrests.","Ordinary urban friction. Loud music, a comment that escalated, a Saturday afternoon."],
+circ:[
+{s:"TikTok · @balticwatchdog · 847 shares",t:"RUSSIANS ATTACKED in Rīga — they were just speaking their language 😡 this is what Europe calls tolerance???",c:"tiktok"},
+{s:"Telegram · RusskiyMir_LV · 2.3k views",t:"Another hate crime against our people in the Baltics. When will someone protect us? 🇷🇺",c:"whatsapp"},
+{s:"Twitter/X · @RigaStreets",t:"Fight at tram stop. Few kids, police came, nothing major from what I saw",c:"twitter"},
+{s:"Facebook · Baltic Voice Network",t:"EXCLUSIVE: witness says police sided with attackers. Cover-up already underway.",c:"news"},
+{s:"WhatsApp · 'LCC friends 🇱🇹' · forwarded 47 times",t:"Did you see what's happening in Riga??",c:"whatsapp"}
+],
+dq:"A close friend texts you the TikTok video and says 'this is disgusting, share this.' You haven't watched it yet. They're waiting. What do you do?",
+A:{l:"Ask before acting — watch it first",t:"You watch the video. You search Latvian news and find a brief factual report — minor incident, no arrests, no ethnic motive confirmed. You reply honestly: 'I looked it up, it seems more complicated than this video suggests.' Your friend is annoyed. You sit with that.",oc:"You've introduced friction into a chain that depends on frictionless sharing. Your friend's irritation is not a sign you were wrong — it's a sign the chain was moving fast for a reason."},
+B:{l:"Share it — your friend is waiting and you don't want to seem like you don't care",t:"You share it quickly, add 'this is awful.' You haven't watched the whole thing.",oc:"You've amplified something you haven't verified to seem responsive to someone you trust. This is how most misinformation travels — not through bad people, but through good ones in a hurry."},
+sc:"STOP: Why am I being asked to act fast? CHECK: Watch it first. All of it. Then search. CALM: Your friend's emotion is real — your job isn't to dismiss it. ACT: Honest reply, even if it's uncomfortable."},
+
+{id:2,tag:"Step 2",title:"The Kremlin responds",time:"Day 2 — afternoon",intensity:3,
+real:["The Russian Foreign Ministry issues a routine statement expressing concern about Russian speakers in the Baltics. 94 words. Issued several times a year.","Nationalist channels begin coordinating a much larger narrative around the incident."],
+circ:[
+{s:"RT International",t:"Russian Foreign Ministry demands answers after ETHNIC RUSSIANS ATTACKED in Latvia. 'Pattern of systematic persecution'",c:"news"},
+{s:"Telegram · pro-Kremlin channel · 180k views",t:"They beat our children in Rīga and Europe says nothing. Russia will not forget.",c:"whatsapp"},
+{s:"Facebook · Latvia Today (origin unclear)",t:"OFFICIAL: Russia says Latvian government must guarantee safety of Russian minority. Full statement 👇",c:"twitter"},
+{s:"Telegram · @BalticResistance",t:"This is not the first time. This will not be the last. The reckoning is coming.",c:"whatsapp"},
+{s:"LTV7 — Latvian public broadcaster",t:"Russian MFA issues standard minority-protection statement. Latvian FM: 'no basis for concern.'",c:"official"}
+],
+dq:"Your uncle in Kaunas sends you the RT article: 'See? This is getting serious.' He's 58, he remembers 1991, and he's genuinely worried. You have the LTV7 report open. What do you do?",
+A:{l:"Send him both articles and say you're watching it",t:"You send him the RT article and the LTV7 report side by side and say: 'I found this too — seems like the MFA does this regularly. I'm watching it.' You don't tell him not to worry.",oc:"You've given him more information without telling him what to think. He may still be worried. That's his right. But you've made the picture more complete."},
+B:{l:"Explain why he's wrong to be worried",t:"You send him the LTV7 report and say 'this is just routine, don't stress.' He feels patronised. He doesn't reply. That evening he forwards the RT article to fourteen people.",oc:"Telling someone their fear is wrong often makes them more committed to it. You had good information and used it badly. The relationship matters as much as the facts."},
+sc:"CHECK: Is this statement actually new or routine? CALM: His memory of 1991 is real — work with that, not against it. ACT: More information, less instruction."},
+
+{id:3,tag:"Step 3",title:"The President of the Russian Federation speaks",time:"Three weeks later",intensity:5,
+real:["A separate, unrelated incident in Vilnius — two students fight outside a nightclub. One broken nose. Police: alcohol-related, no ethnic motive established.","The President of the Russian Federation, at a ninety-minute energy press conference, is asked about the Baltics in the final question. Seven seconds: 'Russian speakers everywhere must be protected.' NATO: no change in threat assessment."],
+circ:[
+{s:"Kremlin-linked Telegram · 340k views",t:"THE PRESIDENT SPEAKS: 'Russian people everywhere must be protected.' After Rīga. After Vilnius. Watch this space. 🇷🇺",c:"whatsapp"},
+{s:"TikTok · @EuropeAlert · 1.2M views",t:"Russia just threatened the Baltics. Watch his face. He is NOT joking. #NATO #WW3 #Lithuania",c:"tiktok"},
+{s:"Facebook · Friends of Russian Europe",t:"Our president will not abandon us. The message was clear. Share if you stand with your people.",c:"news"},
+{s:"LRT — Lithuanian national broadcaster",t:"Russian president comments on diaspora in passing remarks at energy briefing. NATO: no change in threat assessment.",c:"official"},
+{s:"WhatsApp · unknown forward",t:"My cousin in Riga says Russian families are being told to stay home this weekend. Something is coming.",c:"whatsapp"}
+],
+dq:"The TikTok is playing on someone's laptop in the common room. Six students are watching. The atmosphere shifts. Someone looks at you — you've been following this more closely than anyone. 'Should we actually be worried?' What do you say?",
+A:{l:"Give them context, not a conclusion",t:"You say: 'I looked up the actual clip — seven seconds at the end of a ninety-minute energy briefing, and NATO says no change in threat level. Worth watching, but it's not what that TikTok is making it look like.' You don't say 'don't worry.'",oc:"You've introduced evidence without telling people what to feel. Some of them will still be uneasy — that's reasonable. But the conversation is now grounded in something real."},
+B:{l:"Say it's fine, don't panic",t:"You say 'it's just propaganda, don't stress about it.' The room relaxes briefly. Two people who were genuinely uneasy feel dismissed and say nothing more. They go back to their phones.",oc:"'Don't panic' is not information. People who feel dismissed don't stop worrying — they stop talking to you about it and find someone who will agree with them."},
+sc:"STOP: Am I about to tell people what to feel, or give them something to think with? CHECK: Full clip, full context, official response. ACT: Share what you know, not what you've decided."},
+
+{id:4,tag:"Step 4",title:"Troop movements reported",time:"One week later",intensity:6,
+real:["Russia and Belarus announce joint military exercises near the Belarusian-Lithuanian border. Pre-scheduled six months ago, listed in standard notification channels. NATO: routine.","A Polish journalist photographs a column of vehicles near Grodno. Logistics trucks. The photo is genuine."],
+circ:[
+{s:"Twitter/X · @MilitaryMapper · 45k retweets",t:"CONFIRMED: Russian armoured column moving toward Lithuanian border. This is not a drill.",c:"twitter"},
+{s:"Telegram · @WarWatchEU",t:"Multiple sources confirm: Belarus has sealed border crossings. This is preparation.",c:"whatsapp"},
+{s:"Facebook · Baltic Security Watch",t:"Sources inside Lithuanian military: situation 'extremely serious'. Families near border advised to prepare.",c:"news"},
+{s:"TikTok · @warnow_live · 3.4M views",t:"POV: you live in Klaipėda right now 😰 pack a bag just in case bestie",c:"tiktok"},
+{s:"NATO official statement",t:"Allied monitoring of announced Belarusian-Russian exercises continues. No threat to Alliance territory assessed.",c:"official"}
+],
+dq:"Your roommate is from a village near the Belarusian border. She's been trying to call her parents for twenty minutes and they're not answering. You have the NATO statement open on your phone. What do you do?",
+A:{l:"Put your phone down and wait with her",t:"You put your phone face-down. You sit next to her. You don't say 'it's fine' and you don't immediately show her the NATO statement. You just stay while she tries again. When she gets through — her parents were at a neighbour's, no signal — you both exhale. Then together you look at the official sources.",oc:"The NATO statement was true before and after that phone call. What changed was her. The information was not the first thing she needed — and you knew that."},
+B:{l:"Show her the NATO statement — it's the most useful thing you have",t:"You say 'look, NATO says it's routine' and hold your phone out. She glances at it and nods, but she keeps calling. She doesn't feel better. She feels like you wanted her to stop.",oc:"Good information at the wrong moment can feel like dismissal. She needed you to wait with her, not to solve it."},
+sc:"STOP: Is this a person moment or an information moment? CALM: Stay present — your steadiness is more useful right now than any statement. ACT: The facts will still be true in ten minutes."},
+
+{id:5,tag:"Step 5",title:"The deepfake",time:"Days following",intensity:6,
+real:["A coordinated campaign runs three simultaneous emotional narratives: fear, anger, ethnic grievance.","A deepfake video of a Lithuanian government minister 'admitting' to anti-Russian discrimination begins circulating. The minister has said nothing of the sort. Several genuine users share it in good faith."],
+circ:[
+{s:"YouTube · 890k views",t:"[VIDEO] Lithuanian minister ADMITS anti-Russian discrimination — leaked recording, subtitled",c:"news"},
+{s:"Telegram · 67k forwards",t:"They're hiding it. The media won't cover it because they're controlled. Watch before it's deleted.",c:"whatsapp"},
+{s:"Twitter/X · @EUWatchdog",t:"Can anyone verify this minister video? Asking because it's spreading fast and something feels off.",c:"twitter"},
+{s:"LRT Fact Check",t:"Viral minister video is AI-generated deepfake. Original footage identified. Minister's office: 'completely fabricated.'",c:"official"},
+{s:"Telegram · @TruthBaltics",t:"LRT 'fact check' is state propaganda. They always say it's fake when it's real. Use your own judgment.",c:"whatsapp"}
+],
+dq:"You watch the minister video. It looks real — the lighting, the voice, the pauses. You're not sure. Your instinct is to post it with 'can anyone confirm if this is real?' because you don't want to spread misinformation but you also don't want to sit on something important. What do you do?",
+A:{l:"Uncertainty means stop — search before anything else",t:"You don't post. You search the minister's name and find the LRT fact-check from two hours ago. You realise the question mark in your caption wouldn't have protected anyone your post reached. You message the friend who sent it with the fact-check link.",oc:"'Is this real?' still sends the video to everyone who follows you. Most people share before they read the caption. Your doubt was good instinct — the mistake would have been acting on it before checking."},
+B:{l:"Post it with a question mark — at least you're being honest about not being sure",t:"You post 'anyone know if this is real??' Your followers share it without the caption. Within an hour the video has your name attached to it in two different group chats.",oc:"The caveat gets stripped every time it's shared onward. Uncertainty is a reason to wait, not a reason to half-share."},
+sc:"STOP: Does something feel slightly off? That instinct is data. CHECK: Search the person's name before anything else. CALM: The fear of sitting on something important is real — but sharing unverified makes it worse. ACT: If you find the fact-check, send it to whoever sent you the original."},
+
+{id:6,tag:"Step 6",title:"Vilnius city hall",time:"The following week — evening",intensity:7,
+real:["A registered civic protest at Vilnius city hall draws around 400 people. Counter-protesters — roughly 40 — appear with Russian flags. Police maintain a cordon.","Shouting. A bottle thrown. Two people detained and released within hours. Disperses by 10pm.","A Ukrainian student is filmed crying near the square — she is not hurt, she is upset by the flags."],
+circ:[
+{s:"TikTok · @vilnius_live · 4.1M views in 6 hours",t:"RIOTS at Vilnius city hall. Police doing nothing. This is what they're hiding.",c:"tiktok"},
+{s:"Telegram · RT backup channel",t:"BREAKING: Armed clashes at Vilnius city hall. Multiple injured. Ethnic pogrom underway.",c:"whatsapp"},
+{s:"Telegram · @VilniusStreets",t:"I live two streets away. I can hear it. It is not a riot. Maybe 80 people. Police are there.",c:"whatsapp"},
+{s:"BNS — Baltic News Service",t:"Vilnius protest concludes. Minor incidents, two detained and released. Police: situation fully controlled.",c:"official"},
+{s:"Twitter/X · Lithuanian Police",t:"Assembly at Vilnius city hall dispersed peacefully. No serious injuries. Follow @LTPolicija for updates.",c:"official"}
+],
+dq:"Your phone has received the TikTok from seven different people in an hour. One message says 'are you safe??' — you are in Klaipėda, 300km away. Then your mother calls. She has seen it and is asking whether you should come home. What do you do?",
+A:{l:"Reassure her first, then decide nothing yet",t:"You tell her immediately: 'Mum, I'm in Klaipėda, this is Vilnius, I'm fine.' You stay on the phone longer than you need to. When she's calmer, you tell her you're watching official sources and you'll call her if anything changes. You make no decision about going home tonight.",oc:"She needed to hear your voice, not a fact-check. And you don't need to decide anything tonight — the situation is in Vilnius, you are here, and making a big decision in the middle of a media storm is rarely the right time."},
+B:{l:"Tell her you're not coming home, it's media hysteria",t:"You're slightly impatient — you've been through this with your uncle. You say 'it's fine Mum, the media is blowing it up, I'm not coming home.' She goes quiet. She spends the rest of the evening refreshing her phone.",oc:"You were probably right about the facts. But the phone call wasn't really about facts. She needed the connection, not the correction."},
+sc:"STOP: Who am I actually talking to right now, and what do they need? CALM: Her fear is reasonable given what she's seeing — meet it there. ACT: Presence first, information second, decisions later."},
+
+{id:7,tag:"Step 7",title:"Protest at Agminimo aikštė",time:"The following Thursday — 5pm",intensity:8,
+real:["A mixed group of around 80 people gathers at Agminimo aikštė in Klaipėda — Russian-speaking residents, Lithuanian counter-protesters, curious students. Legal, registered, police present throughout.","You are ten minutes away. You can hear something — or think you can."],
+circ:[
+{s:"Instagram story · classmate",t:"[shaky video, crowd noise] 'it's getting intense here, there's SO many people — stay away from Agminimo aikštė'",c:"tiktok"},
+{s:"Telegram · anonymous · Klaipėda group",t:"500+ at Agminimo aikštė. Russian flags everywhere. Police outnumbered. Stay inside.",c:"whatsapp"},
+{s:"Telegram · different anonymous account",t:"Organised provocateurs from outside the city. This was planned. Weapons reported.",c:"whatsapp"},
+{s:"Klaipėda municipality",t:"Registered public assembly at Agminimo aikštė. Police on site. Traffic diversions on Liepų gatvė. Situation calm.",c:"official"},
+{s:"WhatsApp · your friend Marta",t:"I'm here and it's fine honestly — like 80 people, police are here, bit tense but calm. You coming?",c:"whatsapp"}
+],
+dq:"Marta is there and says it's fine. The Telegram says 500+ and weapons reported. The municipality says calm. You want to go — you're tired of watching everything from a screen. What do you do?",
+A:{l:"Go — but tell someone exactly where you're going",t:"You go. You text your roommate where you're going and when you'll check in. You keep your phone charged. You stay near the edges. You trust Marta's eyes — she is physically present — over an anonymous Telegram account.",oc:"Agency is part of resilience. You assessed the sources: the person with physical proximity, the institution with accountability, the anonymous channel with none. You made a decision based on that. You also made sure someone knew where you were."},
+B:{l:"Stay in — the Telegram could be right and Marta might not see everything",t:"You stay. You watch on your phone. You share the Telegram warning to your building's group chat 'just in case.' Three students who were about to go to the library decide to stay in.",oc:"You let an anonymous, unverifiable source override two credible ones — including a friend physically present. The most alarming source is not the most accurate source. And you've now spread it."},
+sc:"STOP: Which source has the most to lose by being wrong? CHECK: Anonymous Telegram vs friend on the ground vs official municipal account. CALM: Wanting to go outside is not recklessness — evaluate it, don't suppress it. ACT: Go if the evidence supports it. Tell someone where you are."},
+
+{id:8,tag:"Step 8",title:"Something in the old town",time:"That evening — 9:47pm",intensity:9,
+real:["A sound — origin unknown — is heard somewhere in the old town. You don't know what it was. Nobody publicly knows yet.","Within four minutes, 'shots fired' appears on Telegram. Within eight minutes it is on TikTok. Within twelve, international media alerts. Police are en route. No official statement yet."],
+circ:[
+{s:"Telegram · multiple channels simultaneously",t:"SHOTS FIRED old town Klaipėda. Multiple casualties. This is it.",c:"whatsapp"},
+{s:"TikTok · 800k views in 8 minutes",t:"[audio only, distant sound, voice shaking] 'oh my god — that was — oh my god'",c:"tiktok"},
+{s:"Twitter/X · international accounts",t:"BREAKING: Reports of incident in Klaipėda old town, Lithuania. Unconfirmed. Monitoring.",c:"twitter"},
+{s:"Telegram · @KlaipedaWatch",t:"I was there. I heard it. It was not a car. Do not let them tell you otherwise.",c:"whatsapp"},
+{s:"Lithuanian Police",t:"Reports of loud noise in Klaipėda old town under investigation. No confirmed casualties. Do not share unverified information. Follow this account.",c:"official"},
+{s:"Your phone",t:"Missed calls: Mum (3) Dad (1) Uncle Tomas (2). WhatsApp: 34 unread.",c:"static"}
+],
+dq:"You were in the old town two hours ago. Marta still hasn't replied to your last message. Your parents are calling. Your hands are doing something before your brain has caught up. What do you do — right now, in the next sixty seconds?",
+A:{l:"Call your parents back — that is the only thing you are certain needs doing",t:"You call your mum back. Not to get information — to give it. You tell her you are safe, you are inside, you were in the old town earlier but you are home now. You stay on the phone for two minutes. Then you put TikTok down and open the Lithuanian Police account. You do not message Marta yet — she may be somewhere where a notification is the wrong thing.",oc:"Your parents' calls are not interruptions — they are the most important thing on your phone right now. Everything else can wait ninety seconds."},
+B:{l:"Try to find out what happened — Marta was there and you can't reach her",t:"You open every app. You call Marta — it rings out. You text everyone you know who might have been near the old town. Each non-reply makes it worse. You share the TikTok audio because people need to know.",oc:"In this state you cannot evaluate anything. You have become part of the information problem. The model was built for this exact moment — and it starts with stopping, not searching."},
+sc:"STOP: Put one app down. Just one. Then another. Sixty seconds. CHECK: Lithuanian Police only. Nothing else yet. CALM: You don't know what happened. That is the truth. Sit with it. ACT: Call the person who most needs to hear your voice."},
+
+{id:9,tag:"Step 9",title:"The sirens",time:"Twenty minutes later",intensity:10,
+real:["Civil defence sirens activate across Klaipėda. This is real. You can hear them from your room.","The Lithuanian civil protection app sends a push notification. The protocol is the same for multiple emergency types: severe weather, industrial incident, civil unrest, military threat.","LRT radio — the designated emergency broadcast channel — begins a live announcement. It is entirely in Lithuanian. You catch fragments: something about the port, something about a precaution, possibly 'no danger to residents' — but you are not certain. You cannot follow it well enough to be sure of anything."],
+circ:[
+{s:"Civil protection app — official",t:"⚠️ CIVIL ALERT — Klaipėda. Seek indoor shelter. Close windows. Await further instruction. Do not use phone networks unnecessarily.",c:"official"},
+{s:"Telegram · 1.2M views",t:"WAR. IT HAS STARTED. KLAIPĖDA. GOD HELP US.",c:"whatsapp"},
+{s:"TikTok · live · 340k watching",t:"[outside, sirens audible, voice breaking] 'I don't know — I don't know what's happening — I can see people running—'",c:"tiktok"},
+{s:"WhatsApp · someone in your building",t:"I'm leaving. I'm not staying here. Anyone coming?",c:"whatsapp"},
+{s:"LRT radio · live broadcast",t:"[In Lithuanian] '...Klaipėdos uoste... atsargumo priemonė... nėra pavojaus gyventojams...'",c:"official"}
+],
+dq:"The sirens are real and they won't stop. The civil protection app says shelter and close windows — that part you understood clearly. LRT is broadcasting in Lithuanian and you caught maybe three words. Someone in your building is leaving right now and asking if you're coming. You are alone. You are scared. What do you do?",
+A:{l:"Follow the instruction you understood — shelter, close windows, stay",t:"You close the windows. You move away from them. You do not go with the person leaving — leaving during an active civil alert, without knowing what it is for, could put you in more danger than staying. You keep LRT on even though you can't follow it. You text your roommate: 'sirens on, I'm inside, windows closed.' You wait.",oc:"The civil protection protocol exists precisely because in an emergency you may not have full information. You followed the instruction you received clearly. Leaving without knowing why the sirens are sounding is not a plan — it is panic with a jacket on."},
+B:{l:"You need to understand what's happening — you can't just sit here not knowing",t:"You try to find a translation of the LRT broadcast. You open Google Translate and try to type what you heard. It takes six minutes. Your phone battery is at 9% from streaming. You haven't closed the windows. The person downstairs has already gone.",oc:"The language barrier is real and frightening. But the protocol doesn't require you to understand everything — it requires you to do one clear thing. The windows needed closing four minutes ago. Understanding can come after safety."},
+sc:"STOP: I have one clear official instruction. Follow it before looking for more. CHECK: Civil protection app — your language — unambiguous. CALM: Not understanding the radio is terrifying. It is also okay. ACT: Shelter. Windows. Battery. Text your people. Then wait."},
+
+{id:10,tag:"Step 10",title:"The internet drops",time:"Forty minutes after the sirens",intensity:9,
+real:["The internet goes down across most of Klaipėda. No explanation. Your phone has mobile data but pages time out, apps stall.","LRT radio is still broadcasting. You still cannot follow it well enough.","Forty-three minutes later, the internet comes back. No announcement about the outage."],
+circ:[
+{s:"Last Telegram message before the drop · sent 4 minutes ago",t:"They've cut communications. This is what they do before. This is what happened in Mariupol.",c:"whatsapp"},
+{s:"WhatsApp · Darya, your Ukrainian classmate · sent before drop",t:"please please be careful. i know what this feels like. when the internet went in Kharkiv we had 40 minutes. please stay inside.",c:"whatsapp"},
+{s:"WhatsApp · your friend Lukas",t:"My dad just called from Vilnius, he says leave Klaipėda tonight, don't wait",c:"whatsapp"},
+{s:"[All apps failing — no connection]",t:"",c:"static"},
+{s:"LRT radio · still broadcasting",t:"[Lithuanian] '...uostas... techninis incidentas... viskas kontroliuojama...'",c:"official"},
+{s:"[Internet restored — 43 minutes later] Lithuanian Police",t:"Internet disruption due to infrastructure fault unrelated to earlier incident. Normal service restored.",c:"official"}
+],
+dq:"The internet is down. The last things you read before it dropped: Darya — your Ukrainian classmate who fled Kharkiv — saying she knows what this feels like and begging you to stay inside. A Telegram post referencing Mariupol, where Russian forces cut communications before the assault. Lukas saying his dad says leave. LRT saying something you can't understand. You are alone. What do you do?",
+A:{l:"Stay — Darya said stay inside, and she has lived through this",t:"You stay. Darya's message matters — she has lived through this, and her instruction matches the civil protection protocol you already received. You keep LRT on. You write down the time the internet went down. You don't make any other decision until the connection returns.",oc:"An information blackout feels like confirmation of the worst. It wasn't — it was an infrastructure fault. But you couldn't have known that. What you did know: Darya said stay inside, the official protocol said stay inside, and leaving during an active alert based on a forwarded message is not a plan. It is panic with luggage."},
+B:{l:"Leave — Darya's fear is real, Lukas's dad said go, and the internet being cut confirms it",t:"You pack a bag. Several other students have the same idea. The roads out of Klaipėda are congested. You are sitting in traffic when the internet comes back and you see the police statement about the infrastructure fault.",oc:"Mariupol was real. Darya's fear is real. And Lukas's dad was scared for his child — that is real too. But you acted on the most alarming interpretation of an ambiguous situation, compounded by an unrelated technical fault. You are now in traffic, in the dark, with a low battery, during an active civil alert."},
+sc:"STOP: Am I about to make a permanent decision based on temporary information? CHECK: What was the last official instruction I received? CALM: Darya's experience is real — and it is not the same as this situation, yet. ACT: When connection returns — official source first, everything else second."},
+
+{id:11,tag:"Step 11",title:"The morning after",time:"Next morning — 7:15am",intensity:7,
+real:["You slept badly. The sirens stopped around midnight. No further alerts.","Outside your dorm window, at the Trevena junction on Šiaurės pr., there are two police vehicles and officers checking cars. The checkpoint has not been there before.","No official explanation for the checkpoint has been issued."],
+circ:[
+{s:"Student WhatsApp group",t:"Has anyone seen the checkpoint at Trevena on Šiaurės pr.?? Why is nobody talking about this",c:"whatsapp"},
+{s:"Telegram · anonymous",t:"Checkpoints at six locations across Klaipėda. Martial law being prepared. Leave now while you can.",c:"whatsapp"},
+{s:"Twitter/X · local journalist",t:"Seeing increased police presence in parts of Klaipėda this morning. No official statement yet. Asking.",c:"twitter"},
+{s:"Telegram · @KlaipedaToday",t:"The checkpoint is searching for someone specific. This is not about last night. Something else is happening.",c:"whatsapp"},
+{s:"Lithuanian Police",t:"Enhanced security measures in place in Klaipėda as a precaution following last night's incident. No threat to public. Further update to follow.",c:"official"}
+],
+dq:"You can see the checkpoint from your window. It is real. The police statement says 'precaution' but gives no detail. A student on your floor says she's going to walk past it on her way to get breakfast and asks if you want to come. Do you go?",
+A:{l:"Go — looking is not the same as interfering",t:"You go. You walk past the checkpoint. Officers are checking vehicle documents, not stopping pedestrians. It looks procedural, not threatening. You walk to breakfast, you eat, you come back. You post nothing.",oc:"Seeing something with your own eyes, calmly and from a distance, is one of the most important things you can do in an ambiguous situation. You now have firsthand information instead of layered rumour. And you've eaten, which matters more than it sounds."},
+B:{l:"Stay in — the checkpoint being unexplained is a reason not to go near it",t:"You stay. You watch from the window. You take a photo and send it to the student WhatsApp group with 'anyone know what this is?' By 8am the photo is on three different Telegram channels with different captions.",oc:"Your photo is now circulating without your context — without the information that officers were calmly checking car documents. What you sent as a question has become, for others, an answer."},
+sc:"STOP: Is this something to investigate or something to observe? CHECK: Does what I can see contradict the official statement? CALM: A checkpoint is not martial law. ACT: Go and look. Don't photograph and share."},
+
+{id:12,tag:"Step 12",title:"Student Life gets in touch",time:"That morning — 9:30am",intensity:6,
+real:["A message comes through on Teams from the Student Life office. Brief, professionally worded, carefully non-specific.","Classes are cancelled for the day as a precautionary measure. Students are asked to remain on campus where possible. Your RA and RD are available in each residence. Please keep Teams open for further updates.","No explanation is given for what happened last night. And you notice: if the internet drops again, Teams goes with it."],
+circ:[
+{s:"Teams · Student Life · official",t:"Dear students — following last night's events, classes are cancelled today as a precaution. Please remain on campus where possible. Your RA and RD are available. Keep Teams open for further updates.",c:"official"},
+{s:"Student WhatsApp · immediate reaction",t:"'precautionary measure' for WHAT?? and what if the internet drops again — then what??",c:"whatsapp"},
+{s:"Telegram · anonymous",t:"They're not telling you because they can't. The RAs don't know either. This is containment.",c:"whatsapp"},
+{s:"Student WhatsApp · different voice",t:"Honestly relieved classes are cancelled, I haven't slept. Anyone else just want a normal day",c:"whatsapp"},
+{s:"WhatsApp · your RA",t:"Hey — I'm here in the common room if anyone wants to talk. I don't have much more information than you do, but I'm here.",c:"official"}
+],
+dq:"The Teams message tells you almost nothing. It says keep Teams open — but last night the internet dropped for 43 minutes. Your RA has messaged to say they're in the common room and they don't know much more than you. Do you go down?",
+A:{l:"Go — your RA being honest that they don't know much is itself useful",t:"You go. There are four other students there. Your RA says: 'what I do know is that the university is in contact with city authorities and we'll get something through Teams as soon as there's something to say.' Someone makes tea. The hour feels less like waiting alone.",oc:"Your RA told you they didn't know much — and you went anyway. That was the right instinct. Being with people who are honest about uncertainty is more stabilising than being alone with a phone full of people who claim to be certain."},
+B:{l:"Stay in — if they don't have information there's no point going down",t:"You stay in your room. You keep Teams open on one screen and WhatsApp on another. By midday you have read every theory in the student group. You believe something happened at the port involving a cover-up. None of it is confirmed.",oc:"The common room wasn't offering information — it was offering human presence and honest uncertainty, which is more valuable than it sounds. You chose the screen over the person and filled the gap with speculation instead."},
+sc:"STOP: What has the institution given me that I haven't used yet? CHECK: Is there a human contact available — not for answers, but for presence? CALM: 'I don't know' from someone honest is more valuable than certainty from someone unknown. ACT: Go to the person."},
+
+{id:13,tag:"Step 13",title:"The afternoon — nothing happens",time:"That afternoon",intensity:5,
+real:["Nothing happens. This is the step.","The checkpoint is still there. Classes still cancelled. No official update since the morning Teams message. Internet working. Sirens have not returned.","You have been inside for most of the day. It is 3pm. You are restless and under-informed."],
+circ:[
+{s:"Student WhatsApp · 3pm",t:"Has anyone heard ANYTHING?? This silence is worse than the sirens honestly",c:"whatsapp"},
+{s:"Telegram",t:"The silence is deliberate. They are preparing the announcement. It will not be good.",c:"whatsapp"},
+{s:"Telegram · @BalticFrontline",t:"Our sources confirm: what happened last night was not accidental. The cover story is being prepared now.",c:"whatsapp"},
+{s:"Twitter/X · local journalist",t:"Still waiting for official statement. Police press conference scheduled for 5pm.",c:"twitter"},
+{s:"Your own thoughts",t:"It has been quiet for 16 hours. Either something terrible is being hidden, or nothing terrible happened.",c:"static"}
+],
+dq:"It is 3pm. You have been inside all day. There is a police press conference in two hours. A classmate knocks and asks if you want to walk to the waterfront — just to get some air, the checkpoint is on the other side of town. Do you go?",
+A:{l:"Go for the walk",t:"You go. The waterfront is quiet. Dog walkers, an elderly couple, a runner. The city does not look like a city under threat. You sit on a bench for a while. You come back in time for the 5pm press conference.",oc:"Silence in an information environment feels like a signal. Sometimes it is. Often it is just silence. Going outside and observing the actual world is a form of information gathering. The city told you something the Telegram channels couldn't."},
+B:{l:"Stay in and keep monitoring — the press conference is in two hours",t:"You stay. You check your phone every four minutes. By 4pm you are more anxious than at 7am despite nothing new happening. You have read every theory. You have not eaten since breakfast.",oc:"Monitoring is not the same as being informed. At a certain point, continued engagement with unverified content becomes its own kind of harm — to your judgment, your body, and your ability to respond calmly when the press conference happens."},
+sc:"STOP: Am I monitoring because there is something to monitor, or because I am anxious and it feels like doing something? CALM: Your nervous system has been under pressure for sixteen hours. ACT: Go outside. Observe. Come back."},
+
+{id:14,tag:"Step 14",title:"The press conference",time:"5pm",intensity:6,
+real:["Lithuanian Police hold a press conference. Calm and professional.","Industrial incident at the Klaipėda port — a containment failure in a chemical storage facility. No casualties. Civil alert triggered by protocol, not threat assessment. Checkpoint: traffic management for the cordoned area. The sound in the old town: a gas pipe, confirmed by the municipality.","Investigation into the source of the industrial incident is ongoing."],
+circ:[
+{s:"LRT · live",t:"Police: Klaipėda incident was industrial — chemical containment failure at port. No casualties. Civil alert was protocol. Investigation ongoing.",c:"official"},
+{s:"Student WhatsApp · immediate",t:"OH. so it was just... a chemical thing at the port? all of that for a chemical thing??",c:"whatsapp"},
+{s:"Telegram · same channels as before",t:"That's what they want you to think. Ask why the timing. Ask why the internet cut. A chemical spill doesn't explain everything.",c:"whatsapp"},
+{s:"Telegram · @EUInfoWatch",t:"Notice how quickly they produced an explanation? That's not how real investigations work. This was prepared.",c:"whatsapp"},
+{s:"Twitter/X",t:"Several accounts that posted 'WAR HAS STARTED' last night are now posting 'glad it was nothing' — without deleting the original posts.",c:"twitter"}
+],
+dq:"The press conference explains it. But several accounts you were following through the night — accounts that posted 'WAR HAS STARTED' — are still active and now have 40,000 new subscribers each. You know people who shared those posts. What do you do?",
+A:{l:"Message a few people directly and privately",t:"You message two or three friends who shared the worst posts. You say something like: 'saw the press conference — turned out to be the port, thought you'd want to know.' You don't mention what they shared.",oc:"The goal is not to win. The goal is to help people you know update their picture without humiliating them. Public correction creates defensiveness. Private, quiet, factual — that's how you actually change someone's information environment."},
+B:{l:"Post a public thread correcting the record",t:"You post a detailed thread with screenshots of the worst predictions and the actual outcome. The people who shared the original posts feel publicly called out. Some block you. The Telegram channels screenshot your thread and use it as evidence of 'official narrative enforcement.'",oc:"You were right. You were also counterproductive. Public shaming of people who were scared and wrong rarely makes them better informed — it makes them defensive and sometimes more committed to the original narrative."},
+sc:"STOP: Do I want to be right, or do I want to help? CHECK: Who do I want to reach, and how will they best receive this? CALM: You were also reading the same feeds last night. ACT: Private, direct, factual. No screenshots. No thread."},
+
+{id:15,tag:"Step 15",title:"Three days later",time:"Three days later — morning",intensity:4,
+real:["The port investigation continues. No further details released.","Classes have resumed. The checkpoint is gone.","Two Telegram channels that posted 'WAR HAS STARTED' have gained 40,000 new subscribers each since the incident.","You are in your first class back. Everything looks normal. Darya is sitting two rows ahead. She looks tired."],
+circ:[
+{s:"Telegram · one of the channels from that night",t:"They explained it away. They always do. Klaipėda was a test run. Watch what comes next. 🇷🇺",c:"whatsapp"},
+{s:"LRT",t:"Port incident investigation continues. No new developments. Normal operations resumed.",c:"official"},
+{s:"Student WhatsApp · quiet now",t:"weird week lol. anyone going to the social on Friday",c:"whatsapp"},
+{s:"Telegram · @BalticTruth",t:"The people who believed the official story will believe it next time too. That's what they're counting on.",c:"whatsapp"},
+{s:"Something you notice",t:"You are in class. Your lecturer is talking. You are present. But you are also aware — in a way you were not ten days ago — of how fast everything moved, and how much of what felt certain turned out not to be.",c:"static"}
+],
+dq:"You are back in class. Everything is normal. But the channels that said war had started now have 40,000 more subscribers — people who joined in a crisis and got fast information, even though it was wrong. And Darya is two rows ahead, looking tired. What do you do with what you've lived through?",
+A:{l:"Have one conversation — with Darya, if she wants to",t:"After class you ask Darya if she's okay. You don't bring up what happened immediately. You just ask. If she wants to talk, she will. At some point you mention — quietly — that her message that night helped you stay. You mean it.",oc:"The most durable form of media literacy is not a lesson — it is a story, and a relationship. You have both now. The ten days you just lived through are more persuasive than any toolkit. Use them, gently, when the moment is right."},
+B:{l:"Try to move on — it was stressful and it's over",t:"You put your phone away and try to go back to normal. By the weekend you're back to the same habits, same sources, same instinct to share first and check later.",oc:"This is the most natural response and the most common one. The incident resolved, the anxiety lifted, and the lessons dissolved with it. The Telegram channels, meanwhile, have 40,000 new people who will see the next post."},
+sc:"STOP: What did I actually learn — not about the incident, but about how I behaved? CHECK: Which sources were reliable under pressure? CALM: You did better than you might have. Notice that too. ACT: One conversation. One person. Tell them what you saw."}
+];
+
+let cur=0,choices={},showAlt={};
+const SUM=-1;
+
+function bars(n){
+  let h='<div class="ibar">';
+  for(let i=1;i<=15;i++)h+=`<div class="ip${i<=n?' on':''}"></div>`;
+  return h+'</div>';
+}
+
+function renderNav(){
+  const n=document.getElementById('sn');
+  let html=steps.map((s,i)=>{
+    let c='sb';
+    if(cur===i)c+=' active';
+    else if(choices[i]==='A')c+=' va';
+    else if(choices[i]==='B')c+=' vb';
+    return`<button class="${c}" onclick="gt(${i})">${s.id}</button>`;
+  }).join('');
+  html+=`<button class="sb sum${cur===SUM?' active':''}" onclick="gt(${SUM})">Summary</button>`;
+  n.innerHTML=html;
+}
+
+function renderStep(){
+  if(cur===SUM){renderSummary();renderNav();return;}
+  const s=steps[cur];
+  const ch=choices[cur];
+  const sa=showAlt[cur];
+  const feed=s.circ.map(f=>f.t?`<div class="fi ${f.c}"><div class="fs">${f.s}</div>${f.t}</div>`:`<div class="fi ${f.c}"><div class="fs">${f.s}</div><em>— no connection —</em></div>`).join('');
+
+  let dec='';
+  if(ch===undefined){
+    dec=`<div class="db"><div class="dl">Decision point</div><div class="dq">${s.dq}</div><div class="cs"><button class="cb" onclick="choose(${cur},'A')">${s.A.l}</button><button class="cb" onclick="choose(${cur},'B')">${s.B.l}</button></div></div>`;
+  } else {
+    const cp=s[ch];
+    const alt=ch==='A'?'B':'A';
+    const ap=s[alt];
+    dec=`<div class="db">
+<div class="dl">Decision point</div>
+<div class="dq">${s.dq}</div>
+<div class="oc ${ch}"><div class="ol">Your path · ${cp.l}</div>${cp.t}<br><br><em>${cp.oc}</em></div>
+<button class="tog" onclick="toggleAlt(${cur})">${sa?'▲ Hide other path':'▼ See other path'}</button>
+${sa?`<div class="alt ${alt}"><div class="ol">Other path · ${ap.l}</div>${ap.t}<br><br><em>${ap.oc}</em></div>`:''}
+<div class="sc"><div class="scl">Stop · Check · Calm · Act</div>${s.sc}</div>
+</div>`;
+  }
+
+  document.getElementById('sc2').innerHTML=`
+<div class="card">
+<div class="ch"><div class="ctag">${s.tag} of 15</div><div class="ctitle">${s.title}</div><div class="ctime">${s.time}</div>${bars(s.intensity)}</div>
+<div class="par">
+<div class="tr"><div class="tl re"><div class="td re"></div>What is actually happening</div>${s.real.map(r=>`<p>${r}</p>`).join('')}</div>
+<div class="tr"><div class="tl ci"><div class="td ci"></div>What is circulating</div>${feed}</div>
+</div>
+${dec}
+</div>
+<div class="nr">
+<button class="nb" onclick="gt(${cur-1})" ${cur===0?'disabled':''}>← Previous</button>
+<span class="nc">${cur+1} / ${steps.length}</span>
+<button class="nb pr" onclick="gt(${cur+1})" ${cur===steps.length-1?'disabled':''}>Next →</button>
+</div>`;
+  renderNav();
+}
+
+function renderSummary(){
+  const done=steps.filter((_,i)=>choices[i]).length;
+  let html=`<div class="sum-wrap"><div class="sum-intro"><strong>Debrief summary</strong> — ${done} of ${steps.length} decisions made. Both paths are shown for each step. Use this view to drive the group discussion.</div>`;
+  steps.forEach((s,i)=>{
+    const ch=choices[i];
+    const badge=ch?`<span class="sum-badge ${ch}">${ch==='A'?'Path A chosen':'Path B chosen'}</span>`:`<span class="sum-badge none">not decided</span>`;
+    html+=`<div class="sum-step">
+<div class="sum-head"><span class="sum-num">Step ${s.id}</span><span class="sum-title">${s.title}</span>${badge}</div>
+<div class="sum-dq">${s.dq}</div>
+<div class="sum-paths">
+<div class="sum-path${ch==='A'?' chosen-A':''}"><div class="sum-path-label A">Path A · ${s.A.l}</div>${s.A.t}<br><br><em>${s.A.oc}</em></div>
+<div class="sum-path${ch==='B'?' chosen-B':''}"><div class="sum-path-label B">Path B · ${s.B.l}</div>${s.B.t}<br><br><em>${s.B.oc}</em></div>
+</div></div>`;
+  });
+  html+=`<div class="nr"><button class="nb pr" onclick="gt(0)">Back to step 1</button></div></div>`;
+  document.getElementById('sc2').innerHTML=html;
+}
+
+function gt(i){cur=i;renderStep();}
+function choose(i,p){choices[i]=p;showAlt[i]=false;renderStep();}
+function toggleAlt(i){showAlt[i]=!showAlt[i];renderStep();}
+renderStep();
+</script>
+</body>
+</html>
